@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sgu_portable/core/service/context_service.dart';
 import 'package:sgu_portable/presentation/navigation/AppNavigation.dart';
 
 import 'injection_container.dart';
 
 Future<void> main() async {
   await initInjection();
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -15,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      key: sl<ContextService>().key,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

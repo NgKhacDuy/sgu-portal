@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgu_portable/injection_container.dart';
-import 'package:sgu_portable/presentation/bloc/login/login_bloc.dart';
-import 'package:sgu_portable/presentation/bloc/login/login_event.dart';
+import 'package:sgu_portable/presentation/bloc/home/home_event.dart';
+import '../bloc/home/home_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   final advancedDrawerController = AdvancedDrawerController();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<LoginBloc>(
-      create: (context) => sl()..add(LoginEvent()),
+    return BlocProvider<HomeBloc>(
+      create: (context) => sl()..add(HomeEvent()),
       child: AdvancedDrawer(
         controller: advancedDrawerController,
         animationCurve: Curves.easeInOut,
