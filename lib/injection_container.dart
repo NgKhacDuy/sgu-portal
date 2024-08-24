@@ -4,15 +4,18 @@ import 'package:logger/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:sgu_portable/core/network/network_compute.dart';
 import 'package:sgu_portable/core/service/context_service.dart';
+import 'package:sgu_portable/data/datasource/local/login_local_data_source.dart';
 import 'package:sgu_portable/data/datasource/remote/login_remote_data_source.dart';
 import 'package:sgu_portable/data/repositories/auth_repository_impl.dart';
-import 'package:sgu_portable/domain/repositories/AuthRepository.dart';
+import 'package:sgu_portable/domain/repositories/auth_repository.dart';
 import 'package:sgu_portable/domain/usecases/login_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'presentation/bloc/login/login_bloc.dart';
 
 final sl = GetIt.instance;
 Future<void> initInjection() async {
+  final sharedPreferences = await SharedPreferences.getInstance();
   // bloc
 
   sl.registerFactory(() => LoginBloc(sl()));
@@ -21,11 +24,14 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => LoginUsecase(sl()));
 
   // repository
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(sl(), sl()));
 
   // datasource
   sl.registerLazySingleton<LoginRemoteDataSource>(
       () => LoginRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<LoginLocalDataSource>(
+      () => LoginLocalDataSourceImpl(sharedPreferences: sl()));
 
   // external
   sl.registerLazySingleton(() => Dio(
@@ -37,4 +43,5 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => Logger());
   sl.registerLazySingleton(() => ContextService());
   sl.registerLazySingleton(() => NetworkCompute(sl()));
+  sl.registerLazySingleton(() => sharedPreferences);
 }

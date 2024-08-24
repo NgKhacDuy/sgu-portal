@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sgu_portable/core/service/context_service.dart';
-import 'package:sgu_portable/presentation/navigation/AppNavigation.dart';
+import 'package:sgu_portable/presentation/navigation/app_navigation.dart';
 
 import 'injection_container.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await initInjection();
   runApp(const MaterialApp(
     home: MyApp(),

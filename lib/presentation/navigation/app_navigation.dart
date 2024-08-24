@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sgu_portable/presentation/screen/HomeScreen.dart';
+import 'package:sgu_portable/presentation/screen/home_screen.dart';
 import 'package:sgu_portable/presentation/screen/login_screen.dart';
 
 class AppNavigation {

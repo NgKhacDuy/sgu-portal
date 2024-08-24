@@ -10,15 +10,19 @@ import 'package:sgu_portable/domain/usecases/login_usecase.dart';
 import 'package:sgu_portable/injection_container.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_event.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUsecase loginUsecase;
-  LoginBloc(this.loginUsecase) : super(LoginInitial()) {
+  LoginBloc(this.loginUsecase) : super(LoginState()) {
     on<StartLogin>(_onLogin);
+    on<ChangeCheckbox>(onChangeCheckbox);
+    on<LoginInitEvent>(onInit);
   }
   final formKey = GlobalKey<FormBuilderState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isRemember = false;
 
   Future<void> _onLogin(StartLogin event, Emitter<LoginState> emit) async {
     try {
@@ -26,6 +30,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(LoginLoading(isLoading: true));
         await loginUsecase
             .call(Params(username: event.username, password: event.password));
+        if (isRemember) {
+          await sl<SharedPreferences>().setBool("isRemember", true);
+          await sl<SharedPreferences>()
+              .setString("mssv", usernameController.text);
+          await sl<SharedPreferences>()
+              .setString("password", passwordController.text);
+        } else {
+          await sl<SharedPreferences>().setBool("isRemember", false);
+        }
         emit(LoginSuccess());
       }
     } on DioException catch (e) {
@@ -34,6 +47,30 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           context: sl<ContextService>().key.currentContext!,
           type: QuickAlertType.error,
           title: e.response?.data["message"]);
+    }
+  }
+
+  Future<void> onChangeCheckbox(
+      ChangeCheckbox event, Emitter<LoginState> emit) async {
+    isRemember = event.value;
+    emit(CheckBoxState(value: event.value));
+  }
+
+  Future<void> onInit(LoginInitEvent event, Emitter<LoginState> emit) async {
+    sl<Logger>().e("here");
+    final isRemember = sl<SharedPreferences>().getBool("isRemember");
+    if (isRemember != null && isRemember) {
+      final mssv = sl<SharedPreferences>().getString("mssv");
+      final password = sl<SharedPreferences>().getString("password");
+      if (mssv != null && password != null) {
+        usernameController.text = mssv;
+        passwordController.text = password;
+        emit(CheckBoxState(value: true));
+        emit(LoginInitial(
+            isRemember: isRemember,
+            usernameController: usernameController,
+            passwordController: passwordController));
+      }
     }
   }
 }

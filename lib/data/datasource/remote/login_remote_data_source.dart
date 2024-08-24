@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sgu_portable/core/error/exceptions.dart';
+import 'package:sgu_portable/core/network/client_request.dart';
 import 'package:sgu_portable/core/network/network_compute.dart';
-import 'package:sgu_portable/domain/entities/LoginEntity.dart';
+import 'package:sgu_portable/domain/entities/login_entity.dart';
 import 'package:sgu_portable/injection_container.dart';
 
 abstract class LoginRemoteDataSource {
@@ -26,14 +27,16 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
         'password': password,
         'grant_type': 'password',
       };
-      final response = await compute(sl<NetworkCompute>().fetchCompute, {
-        'url': '/auth/login',
-        'data': formData,
-        'option': Options(
-            method: 'POST',
-            headers: headers,
-            contentType: Headers.formUrlEncodedContentType),
-      });
+      final response = await compute(
+          sl<NetworkCompute>().fetchCompute,
+          ClientRequest(
+            url: '/auth/login',
+            body: formData,
+            method: 'post',
+            options: Options(
+                headers: headers,
+                contentType: Headers.formUrlEncodedContentType),
+          ));
       if (response.statusCode == 200) {
         return LoginEntity.fromJson(response.data);
       } else {

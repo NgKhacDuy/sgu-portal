@@ -14,7 +14,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-      create: (context) => sl(),
+      create: (context) => sl()..add(LoginInitEvent()),
       child: Scaffold(
         body: bodyWidget(context),
       ),
@@ -25,21 +25,21 @@ class LoginScreen extends StatelessWidget {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
         if (state is LoginInitial) {
-          return loginForm(context);
+          return loginForm(context, state);
         } else if (state is LoginLoading) {
           return state.isLoading == true
               ? const Center(child: CircularProgressIndicator())
-              : loginForm(context);
+              : loginForm(context, state);
         } else if (state is LoginSuccess) {
           return const Text('Login Success');
         } else {
-          return loginForm(context);
+          return loginForm(context, state);
         }
       },
     );
   }
 
-  Widget loginForm(BuildContext context) {
+  Widget loginForm(BuildContext context, LoginState state) {
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -52,7 +52,9 @@ class LoginScreen extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.35),
               FormBuilderTextField(
                 name: 'username',
-                controller: context.read<LoginBloc>().usernameController,
+                controller: state is LoginInitial
+                    ? state.usernameController
+                    : context.read<LoginBloc>().usernameController,
                 decoration: const InputDecoration(labelText: 'Mã số sinh viên'),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(
@@ -61,7 +63,10 @@ class LoginScreen extends StatelessWidget {
                 ]),
               ),
               FormBuilderTextField(
-                controller: context.read<LoginBloc>().passwordController,
+                obscureText: true,
+                controller: state is LoginInitial
+                    ? state.passwordController
+                    : context.read<LoginBloc>().passwordController,
                 name: "password",
                 decoration: const InputDecoration(labelText: 'Mật khẩu'),
                 validator: FormBuilderValidators.compose([
@@ -69,6 +74,15 @@ class LoginScreen extends StatelessWidget {
                     errorText: "Vui lòng không để trống trường này",
                   ),
                 ]),
+              ),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: state is CheckBoxState ? state.value : false,
+                onChanged: (value) => context
+                    .read<LoginBloc>()
+                    .add(ChangeCheckbox(value: value ?? false)),
+                title: const Text("Nhớ mật khẩu"),
+                controlAffinity: ListTileControlAffinity.leading,
               ),
               const Gap(20),
               Flex(direction: Axis.horizontal, children: [

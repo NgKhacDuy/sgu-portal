@@ -1,4 +1,4 @@
-import 'package:sgu_portable/domain/entities/LoginEntity.dart';
+import 'package:sgu_portable/domain/entities/login_entity.dart';
 
 class LoginModel extends LoginEntity {
   LoginModel(
