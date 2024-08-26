@@ -1,6 +1,5 @@
-import 'package:equatable/equatable.dart';
 
-class LoginEntity extends Equatable {
+class LoginEntity {
   String? accessToken;
   String? tokenType;
   int? expiresIn;
@@ -79,7 +78,4 @@ class LoginEntity extends Equatable {
     data['.issued'] = issued;
     return data;
   }
-
-  @override
-  List<Object?> get props => throw UnimplementedError();
 }

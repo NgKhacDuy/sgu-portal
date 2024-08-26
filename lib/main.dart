@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgu_portable/core/service/context_service.dart';
+import 'package:sgu_portable/presentation/bloc/global/main_bloc.dart';
+import 'package:sgu_portable/presentation/bloc/global/main_event.dart';
+import 'package:sgu_portable/presentation/bloc/global/main_state.dart';
 import 'package:sgu_portable/presentation/navigation/app_navigation.dart';
 
 import 'injection_container.dart';
@@ -18,14 +22,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      key: sl<ContextService>().key,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      routerConfig: AppNavigation.router,
+    return BlocProvider<MainBloc>(
+      create: (context) => MainBloc(sl())..add(MainEventGetData()),
+      child: Builder(builder: (context) {
+        return BlocListener<MainBloc, MainState>(
+          listener: (context, state) {},
+          child: MaterialApp.router(
+            key: sl<ContextService>().key,
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            routerConfig: AppNavigation.router,
+          ),
+        );
+      }),
     );
   }
 }

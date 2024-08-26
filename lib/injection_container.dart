@@ -9,6 +9,8 @@ import 'package:sgu_portable/data/datasource/remote/login_remote_data_source.dar
 import 'package:sgu_portable/data/repositories/auth_repository_impl.dart';
 import 'package:sgu_portable/domain/repositories/auth_repository.dart';
 import 'package:sgu_portable/domain/usecases/login_usecase.dart';
+import 'package:sgu_portable/presentation/bloc/global/main_bloc.dart';
+import 'package:sgu_portable/presentation/bloc/home/home_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'presentation/bloc/login/login_bloc.dart';
@@ -18,7 +20,9 @@ Future<void> initInjection() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   // bloc
 
+  sl.registerFactory(() => MainBloc(sl()));
   sl.registerFactory(() => LoginBloc(sl()));
+  sl.registerFactory(() => HomeBloc());
 
   // usecase
   sl.registerLazySingleton(() => LoginUsecase(sl()));

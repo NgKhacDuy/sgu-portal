@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:logger/logger.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:sgu_portable/core/service/context_service.dart';
@@ -10,6 +11,7 @@ import 'package:sgu_portable/domain/usecases/login_usecase.dart';
 import 'package:sgu_portable/injection_container.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_event.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_state.dart';
+import 'package:sgu_portable/presentation/navigation/app_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
@@ -22,13 +24,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final formKey = GlobalKey<FormBuilderState>();
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final currentContext = sl<ContextService>().key.currentContext;
   bool isRemember = false;
 
   Future<void> _onLogin(StartLogin event, Emitter<LoginState> emit) async {
     try {
       if (formKey.currentState?.validate() == true) {
         emit(LoginLoading(isLoading: true));
-        await loginUsecase
+        final infoUser = await loginUsecase
             .call(Params(username: event.username, password: event.password));
         if (isRemember) {
           await sl<SharedPreferences>().setBool("isRemember", true);
@@ -39,7 +42,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         } else {
           await sl<SharedPreferences>().setBool("isRemember", false);
         }
-        emit(LoginSuccess());
+        sl<SharedPreferences>().setString("infoUser", json.encode(infoUser));
+        AppNavigation.router.go("/home");
       }
     } on DioException catch (e) {
       emit(LoginLoading(isLoading: false));
@@ -57,12 +61,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> onInit(LoginInitEvent event, Emitter<LoginState> emit) async {
-    sl<Logger>().e("here");
-    final isRemember = sl<SharedPreferences>().getBool("isRemember");
-    if (isRemember != null && isRemember) {
+    final getIsRemember = sl<SharedPreferences>().getBool("isRemember");
+    if (getIsRemember != null && getIsRemember) {
       final mssv = sl<SharedPreferences>().getString("mssv");
       final password = sl<SharedPreferences>().getString("password");
       if (mssv != null && password != null) {
+        isRemember = getIsRemember;
         usernameController.text = mssv;
         passwordController.text = password;
         emit(CheckBoxState(value: true));

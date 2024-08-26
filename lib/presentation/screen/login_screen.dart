@@ -30,8 +30,6 @@ class LoginScreen extends StatelessWidget {
           return state.isLoading == true
               ? const Center(child: CircularProgressIndicator())
               : loginForm(context, state);
-        } else if (state is LoginSuccess) {
-          return const Text('Login Success');
         } else {
           return loginForm(context, state);
         }
@@ -77,7 +75,9 @@ class LoginScreen extends StatelessWidget {
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                value: state is CheckBoxState ? state.value : false,
+                value: state is CheckBoxState
+                    ? state.value
+                    : context.read<LoginBloc>().isRemember,
                 onChanged: (value) => context
                     .read<LoginBloc>()
                     .add(ChangeCheckbox(value: value ?? false)),
