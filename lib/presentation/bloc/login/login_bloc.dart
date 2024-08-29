@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
+import 'package:sgu_portable/core/params/login_param.dart';
 import 'package:sgu_portable/core/service/context_service.dart';
 import 'package:sgu_portable/domain/usecases/login_usecase.dart';
 import 'package:sgu_portable/injection_container.dart';
@@ -31,8 +30,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       if (formKey.currentState?.validate() == true) {
         emit(LoginLoading(isLoading: true));
-        final infoUser = await loginUsecase
-            .call(Params(username: event.username, password: event.password));
+        final infoUser = await loginUsecase.call(
+            params:
+                LoginParam(username: event.username, password: event.password));
         if (isRemember) {
           await sl<SharedPreferences>().setBool("isRemember", true);
           await sl<SharedPreferences>()
@@ -42,7 +42,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         } else {
           await sl<SharedPreferences>().setBool("isRemember", false);
         }
-        sl<SharedPreferences>().setString("infoUser", json.encode(infoUser));
+        sl<SharedPreferences>().setString("token", infoUser.accessToken!);
         AppNavigation.router.go("/home");
       }
     } on DioException catch (e) {

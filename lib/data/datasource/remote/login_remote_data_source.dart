@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:sgu_portable/core/error/exceptions.dart';
 import 'package:sgu_portable/core/network/client_request.dart';
 import 'package:sgu_portable/core/network/network_compute.dart';
+import 'package:sgu_portable/core/params/login_param.dart';
 import 'package:sgu_portable/domain/entities/login_entity.dart';
 import 'package:sgu_portable/injection_container.dart';
 
 abstract class LoginRemoteDataSource {
-  Future<LoginEntity> login(String username, String password);
+  Future<LoginEntity> login(LoginParam param);
 }
 
 class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
@@ -16,15 +17,15 @@ class LoginRemoteDataSourceImpl implements LoginRemoteDataSource {
   LoginRemoteDataSourceImpl(this.dio);
 
   @override
-  Future<LoginEntity> login(String username, String password) =>
-      requestLogin(username, password);
+  Future<LoginEntity> login(LoginParam param) =>
+      requestLogin(param);
 
-  Future<LoginEntity> requestLogin(String username, String password) async {
+  Future<LoginEntity> requestLogin(LoginParam param) async {
     try {
       var headers = {'Content-Type': 'application/x-www-form-urlencoded'};
       var formData = {
-        'username': username,
-        'password': password,
+        'username': param.username,
+        'password': param.password,
         'grant_type': 'password',
       };
       final response = await compute(
