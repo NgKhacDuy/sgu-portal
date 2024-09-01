@@ -1,16 +1,14 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_storage/get_storage.dart';
 
 abstract class LoginLocalDataSource {
-  Future<bool> saveToken(String token);
+  Future<void> saveToken(String token);
 }
 
 class LoginLocalDataSourceImpl implements LoginLocalDataSource {
-  final SharedPreferences sharedPreferences;
-
-  LoginLocalDataSourceImpl({required this.sharedPreferences});
+  LoginLocalDataSourceImpl();
 
   @override
-  Future<bool> saveToken(String token) async {
-    return sharedPreferences.setString('token', token);
+  Future<void> saveToken(String token) async {
+    return GetStorage().write('token', token);
   }
 }

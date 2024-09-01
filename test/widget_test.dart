@@ -5,7 +5,6 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sgu_portable/core/usecase/usecase.dart';
@@ -13,7 +12,6 @@ import 'package:sgu_portable/domain/entities/time_table_entity.dart';
 import 'package:sgu_portable/domain/usecases/time_table/get_semester_usecase.dart';
 import 'package:sgu_portable/injection_container.dart';
 
-import 'package:sgu_portable/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

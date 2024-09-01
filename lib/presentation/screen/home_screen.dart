@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sgu_portable/injection_container.dart';
+import 'package:sgu_portable/presentation/bloc/home/home_event.dart';
 import 'package:sgu_portable/presentation/bloc/home/home_state.dart';
 import '../bloc/home/home_bloc.dart';
 
@@ -10,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeBloc>(
-      create: (context) => sl(),
+      create: (context) => sl()..add(HomeInitEvent()),
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           return AdvancedDrawer(

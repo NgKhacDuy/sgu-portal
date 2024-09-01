@@ -1,12 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:logger/logger.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sgu_portable/core/error/exceptions.dart';
 import 'package:sgu_portable/core/network/client_request.dart';
 import 'package:sgu_portable/core/network/network_compute.dart';
 import 'package:sgu_portable/domain/entities/time_table_entity.dart';
 import 'package:sgu_portable/injection_container.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class TimeTableRemoteDataSource {
   Future<TimeTableEntity> getListSemester();
@@ -24,8 +23,7 @@ class TimeTableRemoteDataSourceImpl implements TimeTableRemoteDataSource {
             options: Options(
               method: 'post',
               headers: {
-                "authorization":
-                    "Bearer ${sl<SharedPreferences>().getString("token")}"
+                "authorization": "Bearer ${GetStorage().read("token")}"
               },
             )),
       );
@@ -51,7 +49,9 @@ class TimeTableRemoteDataSourceImpl implements TimeTableRemoteDataSource {
         throw ServerException(response.statusCode!);
       }
     } catch (e) {
-      rethrow;
+      if (e is DioException) {
+        throw ServerException(e.response?.statusCode);
+      }
     }
   }
 }

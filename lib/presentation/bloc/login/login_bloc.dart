@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:sgu_portable/core/params/login_param.dart';
@@ -11,7 +12,6 @@ import 'package:sgu_portable/injection_container.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_event.dart';
 import 'package:sgu_portable/presentation/bloc/login/login_state.dart';
 import 'package:sgu_portable/presentation/navigation/app_navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUsecase loginUsecase;
@@ -34,15 +34,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             params:
                 LoginParam(username: event.username, password: event.password));
         if (isRemember) {
-          await sl<SharedPreferences>().setBool("isRemember", true);
-          await sl<SharedPreferences>()
-              .setString("mssv", usernameController.text);
-          await sl<SharedPreferences>()
-              .setString("password", passwordController.text);
+          GetStorage().write("isRemember", true);
+          GetStorage().write("mssv", usernameController.text);
+          GetStorage().write("password", passwordController.text);
         } else {
-          await sl<SharedPreferences>().setBool("isRemember", false);
+          GetStorage().write("isRemember", false);
         }
-        sl<SharedPreferences>().setString("token", infoUser.accessToken!);
+        GetStorage().write("token", infoUser.accessToken!);
         AppNavigation.router.go("/home");
       }
     } on DioException catch (e) {
@@ -61,10 +59,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<void> onInit(LoginInitEvent event, Emitter<LoginState> emit) async {
-    final getIsRemember = sl<SharedPreferences>().getBool("isRemember");
+    final getIsRemember = GetStorage().read<bool>("isRemember");
     if (getIsRemember != null && getIsRemember) {
-      final mssv = sl<SharedPreferences>().getString("mssv");
-      final password = sl<SharedPreferences>().getString("password");
+      final mssv = GetStorage().read("mssv");
+      final password = GetStorage().read("password");
       if (mssv != null && password != null) {
         isRemember = getIsRemember;
         usernameController.text = mssv;

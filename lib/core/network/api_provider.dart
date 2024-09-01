@@ -1,26 +1,36 @@
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:sgu_portable/core/error/exceptions.dart';
 import 'package:sgu_portable/core/network/client_request.dart';
-import 'package:sgu_portable/core/network/interceptor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiProvider {
   final Dio dio;
-  final SharedPreferences sharedPreferences;
 
-  ApiProvider(this.dio, this.sharedPreferences);
+  ApiProvider(this.dio);
 
   Future<Response> request(ClientRequest clientRequest) {
-    dio.options = BaseOptions(
-      baseUrl: "https://thongtindaotao.sgu.edu.vn/api",
-    );
-    dio.interceptors.addAll([
-      PrettyDioLogger(),
-      NetworkInterceptor(sharedPreferences),
-    ]);
-    return dio.request(clientRequest.url,
-        data: clientRequest.body,
-        options: Options(method: clientRequest.method),
-        queryParameters: clientRequest.queryParameters);
+    try {
+      dio.options = BaseOptions(
+        baseUrl: "https://thongtindaotao.sgu.edu.vn/api",
+      );
+      dio.interceptors.addAll([
+        PrettyDioLogger(requestBody: true, requestHeader: true),
+        // NetworkInterceptor(),
+      ]);
+      return dio.request(clientRequest.url,
+          data: clientRequest.body,
+          options: clientRequest.options,
+          queryParameters: clientRequest.queryParameters);
+    } on DioException catch (e) {
+      Logger().e(e);
+      throw ServerException(e.response!.statusCode!);
+    } on Exception catch (e) {
+      Logger().e(e);
+      throw ServerException(999);
+    } catch (e) {
+      Logger().e("Error: $e");
+      throw ServerException(999);
+    }
   }
 }
