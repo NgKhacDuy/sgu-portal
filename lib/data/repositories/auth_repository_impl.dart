@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:sgu_portable/core/params/login_param.dart';
 import 'package:sgu_portable/data/datasource/local/login_local_data_source.dart';
 import 'package:sgu_portable/data/datasource/remote/login_remote_data_source.dart';
@@ -14,10 +13,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<LoginEntity> login(LoginParam param) async {
     try {
-      final response = await loginRemoteDataSource.login( param);
+      final response = await loginRemoteDataSource.login(param);
       await loginLocalDataSource.saveToken(response.accessToken!);
+      await loginLocalDataSource.saveExpireTime(response.expires!);
       return response;
-    } on DioException {
+    } catch (e) {
       rethrow;
     }
   }

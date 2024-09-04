@@ -1,18 +1,18 @@
-class TimeTableEntity {
+class ListSemesterEntity {
   int? totalItems;
   int? totalPages;
   int? hocKy;
   int? hocKyTheoNgayHienTai;
   List<DsHocKy>? dsHocKy;
 
-  TimeTableEntity(
+  ListSemesterEntity(
       {this.totalItems,
       this.totalPages,
       this.hocKy,
       this.hocKyTheoNgayHienTai,
       this.dsHocKy});
 
-  TimeTableEntity.fromJson(Map<String, dynamic> json) {
+  ListSemesterEntity.fromJson(Map<String, dynamic> json) {
     totalItems = json['total_items'];
     totalPages = json['total_pages'];
     hocKy = json['hoc_ky'];

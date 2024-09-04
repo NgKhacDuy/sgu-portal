@@ -10,7 +10,6 @@ class NetworkCompute {
     try {
       return await ApiProvider(dio).request(clientRequest);
     } catch (e) {
-      // Logger().e(e);
       rethrow;
     }
   }

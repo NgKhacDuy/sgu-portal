@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -12,8 +14,10 @@ class ApiProvider {
   Future<Response> request(ClientRequest clientRequest) {
     try {
       dio.options = BaseOptions(
-        baseUrl: "https://thongtindaotao.sgu.edu.vn/api",
-      );
+          baseUrl: "https://thongtindaotao.sgu.edu.vn/api",
+          validateStatus: (_) {
+            return true;
+          });
       dio.interceptors.addAll([
         PrettyDioLogger(requestBody: true, requestHeader: true),
         // NetworkInterceptor(),
@@ -23,13 +27,15 @@ class ApiProvider {
           options: clientRequest.options,
           queryParameters: clientRequest.queryParameters);
     } on DioException catch (e) {
-      Logger().e(e);
+      if (e.response!.statusCode == HttpStatus.unauthorized) {
+        Logger().e("Unauthorized");
+      }
       throw ServerException(e.response!.statusCode!);
-    } on Exception catch (e) {
-      Logger().e(e);
+    } on Exception {
+      Logger().e("Exception");
       throw ServerException(999);
     } catch (e) {
-      Logger().e("Error: $e");
+      Logger().e("Exception all");
       throw ServerException(999);
     }
   }

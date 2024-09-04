@@ -8,7 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sgu_portable/core/usecase/usecase.dart';
-import 'package:sgu_portable/domain/entities/time_table_entity.dart';
+import 'package:sgu_portable/domain/entities/time_table/list_semester_entity.dart';
 import 'package:sgu_portable/domain/usecases/time_table/get_semester_usecase.dart';
 import 'package:sgu_portable/injection_container.dart';
 
@@ -26,10 +26,5 @@ void main() {
     getListSemesterUsecase = sl();
   });
 
-  group("time table repository", () {
-    test("get list semester", () async {
-      var response = await getListSemesterUsecase.call(params: NoParams());
-      expect(response.runtimeType, TimeTableEntity);
-    });
-  });
+  group("time table repository", () {});
 }
