@@ -46,7 +46,7 @@ class TimeTableRemoteDataSourceImpl implements TimeTableRemoteDataSource {
     try {
       final response = await request(
         ClientRequest(
-            url: '/sch/w-locdshockytkbuser',
+            url: '/sch/w-locdsdoituongthoikhoabieuhocky',
             method: 'post',
             options: Options(
               method: 'post',

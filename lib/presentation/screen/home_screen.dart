@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gap/gap.dart';
+import 'package:sgu_portable/components/app_dropdown_list_semester.dart';
+import 'package:sgu_portable/components/app_dropdown_type_semester.dart';
 import 'package:sgu_portable/injection_container.dart';
 import 'package:sgu_portable/presentation/bloc/home/home_event.dart';
 import 'package:sgu_portable/presentation/bloc/home/home_state.dart';
@@ -120,7 +123,27 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              body: Container(),
+              body: Center(
+                child: Column(
+                  children: [
+                    if (state is HomeLoaded) ...[
+                      AppDropdownTypeSemester(
+                        value: state.typeSemesters,
+                        onChanged: (value) {
+                          print(value);
+                        },
+                      ),
+                      const Gap(16),
+                      AppDropdownListSemester(
+                        value: state.semester,
+                        onChanged: (value) {
+                          print(value);
+                        },
+                      ),
+                    ]
+                  ],
+                ),
+              ),
             ),
           );
         },
