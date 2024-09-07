@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:sgu_portable/core/params/time_table_param.dart';
 import 'package:sgu_portable/domain/entities/time_table/list_semester_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/time_table_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/type_semester_entity.dart';
@@ -5,5 +7,5 @@ import 'package:sgu_portable/domain/entities/time_table/type_semester_entity.dar
 abstract class TimeTableRepository {
   Future<ListSemesterEntity> getListSemester();
   Future<TypeSemesterEntity> getTypeSemester();
-  Future<TimeTableEntity> getTimeTable();
+  Future<TimeTableEntity> getTimeTable(TimeTableParam param);
 }

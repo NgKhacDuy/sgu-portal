@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:sgu_portable/core/error/exceptions.dart';
 import 'package:sgu_portable/core/network/client_request.dart';
 import 'package:sgu_portable/core/network/network_compute.dart';
+import 'package:sgu_portable/core/params/time_table_param.dart';
 import 'package:sgu_portable/domain/entities/time_table/list_semester_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/time_table_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/type_semester_entity.dart';
@@ -12,7 +13,7 @@ import 'package:sgu_portable/injection_container.dart';
 abstract class TimeTableRemoteDataSource {
   Future<ListSemesterEntity> getListSemester();
   Future<TypeSemesterEntity> getTypeSemester();
-  Future<TimeTableEntity> getTimeTable();
+  Future<TimeTableEntity> getTimeTable(TimeTableParam param);
 }
 
 class TimeTableRemoteDataSourceImpl implements TimeTableRemoteDataSource {
@@ -37,8 +38,24 @@ class TimeTableRemoteDataSourceImpl implements TimeTableRemoteDataSource {
   }
 
   @override
-  Future<TimeTableEntity> getTimeTable() {
-    throw UnimplementedError();
+  Future<TimeTableEntity> getTimeTable(TimeTableParam param) async {
+    try {
+      final response = await request(
+        ClientRequest(
+            url: '/sch/w-locdstkbhockytheodoituong',
+            method: 'post',
+            body: param.toJson(),
+            options: Options(
+              method: 'post',
+              headers: {
+                "authorization": "Bearer ${GetStorage().read("token")}"
+              },
+            )),
+      );
+      return TimeTableEntity.fromJson(response["data"]);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override

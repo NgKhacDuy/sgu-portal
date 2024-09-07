@@ -1,3 +1,4 @@
+import 'package:sgu_portable/core/params/time_table_param.dart';
 import 'package:sgu_portable/data/datasource/remote/time_table_remote_data_source.dart';
 import 'package:sgu_portable/domain/entities/time_table/list_semester_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/time_table_entity.dart';
@@ -10,8 +11,8 @@ class TimeTableRepositoryImpl implements TimeTableRepository {
   TimeTableRepositoryImpl({required this.timeTableDataSource});
 
   @override
-  Future<TimeTableEntity> getTimeTable() async {
-    return timeTableDataSource.getTimeTable();
+  Future<TimeTableEntity> getTimeTable(TimeTableParam param) async {
+    return timeTableDataSource.getTimeTable(param);
   }
 
   @override

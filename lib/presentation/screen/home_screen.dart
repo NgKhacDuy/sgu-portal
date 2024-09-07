@@ -128,16 +128,26 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     if (state is HomeLoaded) ...[
                       AppDropdownTypeSemester(
-                        value: state.typeSemesters,
+                        value: state.selectedTypeSemester,
+                        model: state.typeSemesters,
                         onChanged: (value) {
-                          print(value);
+                          context.read<HomeBloc>().add(
+                                HomeChangeTypeSemester(
+                                  typeSemester: value!,
+                                ),
+                              );
                         },
                       ),
                       const Gap(16),
                       AppDropdownListSemester(
-                        value: state.semester,
+                        value: state.selectedListSemester,
+                        model: state.semester,
                         onChanged: (value) {
-                          print(value);
+                          context.read<HomeBloc>().add(
+                                HomeChangeListSemester(
+                                  semester: value!,
+                                ),
+                              );
                         },
                       ),
                     ]
