@@ -1,11 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:sgu_portable/core/error/exceptions.dart';
-import 'package:sgu_portable/domain/entities/time_table/type_semester_entity.dart';
+import 'package:sgu_portable/core/params/time_table_param.dart';
 import 'package:sgu_portable/domain/usecases/time_table/get_semester_usecase.dart';
+import 'package:sgu_portable/domain/usecases/time_table/get_time_table_usecase.dart';
 import 'package:sgu_portable/domain/usecases/time_table/get_type_semester_usecase.dart';
 import 'package:sgu_portable/presentation/bloc/home/home_event.dart';
 import 'package:sgu_portable/presentation/bloc/home/home_state.dart';
@@ -14,7 +16,9 @@ import 'package:sgu_portable/presentation/navigation/app_navigation.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetListSemesterUsecase getListSemesterUsecase;
   final GetTypeSemesterUsecase getTypeSemesterUsecase;
-  HomeBloc(this.getListSemesterUsecase, this.getTypeSemesterUsecase)
+  final GettimeTableUsecase gettimeTableUsecase;
+  HomeBloc(this.getListSemesterUsecase, this.getTypeSemesterUsecase,
+      this.gettimeTableUsecase)
       : super(HomeState()) {
     on<HomeInitEvent>(onInit);
     on<HomeChangeTypeSemester>(onChangeTypeSemester);
@@ -36,6 +40,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final typeSemester = await getTypeSemesterUsecase.call();
       final listSemester = await getListSemesterUsecase.call();
+      await gettimeTableUsecase.call(
+          params: TimeTableParam(
+              hocKy: listSemester.dsHocKy!.first.hocKy!,
+              loaiDoiTuong: typeSemester.dsDoiTuongTkb!.first.loaiDoiTuong!));
       emit(HomeLoaded(
         selectedListSemester: listSemester.dsHocKy!.first.hocKy!,
         selectedTypeSemester: typeSemester.dsDoiTuongTkb!.first.loaiDoiTuong!,
@@ -48,8 +56,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  void onChangeTypeSemester(
-      HomeChangeTypeSemester event, Emitter<HomeState> emit) {
+  Future<void> onChangeTypeSemester(
+      HomeChangeTypeSemester event, Emitter<HomeState> emit) async {
     if (state is HomeLoaded) {
       final currentState = state as HomeLoaded;
       emit(HomeLoaded(
@@ -57,11 +65,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           typeSemesters: currentState.typeSemesters,
           selectedTypeSemester: event.typeSemester,
           selectedListSemester: currentState.selectedListSemester));
+      await gettimeTableUsecase.call(
+          params: TimeTableParam(
+              hocKy: currentState.selectedListSemester,
+              loaiDoiTuong: event.typeSemester));
     }
   }
 
-  void onChangeListSemester(
-      HomeChangeListSemester event, Emitter<HomeState> emit) {
+  Future<void> onChangeListSemester(
+      HomeChangeListSemester event, Emitter<HomeState> emit) async {
     if (state is HomeLoaded) {
       final currentState = state as HomeLoaded;
       emit(HomeLoaded(
@@ -69,6 +81,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           typeSemesters: currentState.typeSemesters,
           selectedTypeSemester: currentState.selectedTypeSemester,
           selectedListSemester: event.semester));
+      await gettimeTableUsecase.call(
+          params: TimeTableParam(
+              hocKy: event.semester,
+              loaiDoiTuong: currentState.selectedTypeSemester));
     }
   }
 }

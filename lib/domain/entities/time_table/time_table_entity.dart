@@ -1,6 +1,6 @@
 class TimeTableEntity {
-  int? totalItems;
-  int? totalPages;
+  num? totalItems;
+  num? totalPages;
   bool? trongThoiGianDangKy;
   bool? trongThoiGianDuyetKqdk;
   bool? hienCotTachPhieuNopTien;
@@ -107,15 +107,15 @@ class DsNhomTo {
   String? maMon;
   String? tenMon;
   String? soTc;
-  int? soTcSo;
+  num? soTcSo;
   bool? isVuot;
   String? nhomTo;
   String? lop;
   String? khoi;
   bool? isKdk;
-  int? slDk;
-  int? slCp;
-  int? slCl;
+  num? slDk;
+  num? slCp;
+  num? slCl;
   bool? isHl;
   bool? enable;
   bool? hauk;
@@ -124,9 +124,9 @@ class DsNhomTo {
   bool? isCtdt;
   bool? isChctdt;
   bool? isKgLt;
-  int? thu;
-  int? tbd;
-  int? soTiet;
+  num? thu;
+  num? tbd;
+  num? soTiet;
   String? gcToHoc;
   bool? isKgHuyKqdk;
   bool? isKgXetTrungtkb;
@@ -204,7 +204,9 @@ class DsNhomTo {
     gcToHoc = json['gc_to_hoc'];
     isKgHuyKqdk = json['is_kg_huy_kqdk'];
     isKgXetTrungtkb = json['is_kg_xet_trungtkb'];
-    dsLop = json['ds_lop'].cast<String>();
+    dsLop = json["ds_lop"] == null
+        ? []
+        : List<String>.from(json["ds_lop"]!.map((x) => x));
     tkb = json['tkb'];
     tooltip = json['tooltip'];
     tuGio = json['tu_gio'];

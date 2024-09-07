@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:sgu_portable/core/params/time_table_param.dart';
 import 'package:sgu_portable/domain/entities/time_table/list_semester_entity.dart';
 import 'package:sgu_portable/domain/entities/time_table/time_table_entity.dart';
